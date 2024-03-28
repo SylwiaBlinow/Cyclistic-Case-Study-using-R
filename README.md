@@ -43,5 +43,20 @@ trips_202312 <- read.csv("202312-divvy-tripdata.csv")
 
 trip2023 <- rbind(trips_202301, trips_202302, trips_202303, trips_202304, trips_202305, trips_202306, trips_202307, trips_202308, trips_202309, trips_202310, trips_202311, trips_202312)
 
-### #Checking Data Structure
+### #Checking Data Structure - 5 719 877 rows
 str(trip2023)
+
+### #Changing TIme and Data Format (from character to date and time)
+trip2023$started_at = strptime(trip2023$started_at,"%Y-%m-%d %H:%M:%S")
+trip2023$ended_at = strptime(trip2023$ended_at,"%Y-%m-%d %H:%M:%S")
+
+### #Checking Data Structure again
+str(trip2023)
+
+### #Adding Trip Duration
+trip2023<-mutate(trip2023,tripduration=difftime(ended_at,started_at, units = "secs"))
+
+### #Preview Data
+head(trip2023)
+
+### #Filter the Data
