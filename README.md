@@ -71,10 +71,9 @@ print(duplicates)
 trips_all01 <- trips_all[complete.cases(trips_all), ]
 
 trips_all02 <- trips_all01[trips_all01$end_station_id != "", ]
-glimpse(trips_all02)
 
 trips_all03 <- trips_all02[trips_all02$start_station_id != "", ]
-glimpse(trips_all03)
+
 
 ### #Checking data after removing values : 4,331,707 rows so 1 388 170 null rows were removed
 
