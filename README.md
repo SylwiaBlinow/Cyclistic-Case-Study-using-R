@@ -46,6 +46,42 @@ trip2023 <- rbind(trips_202301, trips_202302, trips_202303, trips_202304, trips_
 ### #Checking Data Structure - 5 719 877 rows
 str(trip2023)
 
+
+### #Checking empty rows
+null_count <- colSums(is.na(trips_all))
+print(null_count)
+
+![null](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/991cbdc3-0c0c-459b-8477-697455787718)
+
+null_count2 <- colSums(trips_all == "")
+print(null_count2)
+
+![null2](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/75c680a1-d327-4762-a82e-f592db5789fa)
+
+
+### #Checking duplicates - there weren't any
+
+duplicates <- trips_all[duplicated(trips_all), ]
+print(duplicates)
+
+![duplicates](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/6cf6a283-f2b0-4893-b906-68f0fbf87f05)
+
+### #Removing empty rows
+
+trips_all01 <- trips_all[complete.cases(trips_all), ]
+
+trips_all02 <- trips_all01[trips_all01$end_station_id != "", ]
+glimpse(trips_all02)
+
+trips_all03 <- trips_all02[trips_all02$start_station_id != "", ]
+glimpse(trips_all03)
+
+### #Checking data after removing values : 4,331,707 rows so 1 388 170 null rows were removed
+
+glimpse(trips_all03)
+
+![glimps](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/af724d05-2923-4b02-acff-2300e0548024)
+
 ### #Changing TIme and Data Format (from character to date and time)
 trip2023$started_at = strptime(trip2023$started_at,"%Y-%m-%d %H:%M:%S")
 trip2023$ended_at = strptime(trip2023$ended_at,"%Y-%m-%d %H:%M:%S")
