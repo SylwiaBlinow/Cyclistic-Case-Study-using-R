@@ -81,17 +81,57 @@ glimpse(trips_all03)
 
 ![glimps](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/af724d05-2923-4b02-acff-2300e0548024)
 
-### #Changing TIme and Data Format (from character to date and time)
-trip2023$started_at = strptime(trip2023$started_at,"%Y-%m-%d %H:%M:%S")
-trip2023$ended_at = strptime(trip2023$ended_at,"%Y-%m-%d %H:%M:%S")
+
+### #Checking data types
+
+summary(trips_all03)
+
+![summary](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/258e05f7-d8df-434e-895c-5ecf99f02234)
+
+
+Looks like the started_at an ended_at columns are type chr. We need to convert them to the date column type using the as.POSIXct() function.
+
+### #Changing Time and Data Format (from character to date and time)
+
+trips_all03$started_at <- as.POSIXct(trips_all03$started_at, format = "%Y-%m-%d %H:%M:%S")
+trips_all03$ended_at <- as.POSIXct(trips_all03$ended_at, format = "%Y-%m-%d %H:%M:%S")
+
 
 ### #Checking Data Structure again
-str(trip2023)
+str(trips_all03)
+
+### #Adding the individual columns for date, day, month, year, day of the week to ease the in-depth analysis
+
+trips_all04 <- trips_all03
+trips_all04$year <- format(trips_all04$started_at, "%Y")
+trips_all04$month <- format(trips_all04$started_at, "%m")
+trips_all04$day <- format(trips_all04$started_at, "%d")
+trips_all04$hour <- format(trips_all04$started_at, "%H")
+
+### #Create column for day of the week
+
+trips_all04$day_of_week <- format(trips_all04$started_at,"%A")
+
+### #Convert to factor w/levels, specify order of days
+
+trips_all04$day_of_week <- factor(trips_all04$day_of_week, levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
 
 ### #Adding Trip Duration
-trip2023<-mutate(trip2023,tripduration=difftime(ended_at,started_at, units = "secs"))
+trips_all05 <- trips_all04
+trips_all05$trip_duration_seconds <- difftime(trips_all05$ended_at, trips_all05$started_at, units = "secs") 
+trips_all05$trip_duration_seconds <- as.numeric(as.character(trips_all05$trip_duration_seconds))
 
 ### #Preview Data
-head(trip2023)
+head(trips_all05)
 
-### #Filter the Data
+### #Filter the Data - remove trips < 120 minutes
+
+trips_duration <- trips_all05 %>%
+  filter(trip_duration_seconds > 120)
+
+
+### #Create separate data frames for casual riders and members; may be useful for analysis.
+  data_member <- trips_duration %>% 
+    filter(member_casual == "member")
+  data_casual <- trips_duration %>% 
+    filter(member_casual == "casual")
