@@ -102,36 +102,47 @@ str(trips_all03)
 
 ### #Adding the individual columns for date, day, month, year, day of the week to ease the in-depth analysis
 
-trips_all04 <- trips_all03
-trips_all04$year <- format(trips_all04$started_at, "%Y")
-trips_all04$month <- format(trips_all04$started_at, "%m")
-trips_all04$day <- format(trips_all04$started_at, "%d")
-trips_all04$hour <- format(trips_all04$started_at, "%H")
+trips_v4 <- trips_all03
+trips_v4$year <- format(as.Date(trips_v4$started_at), "%Y")
+trips_v4$month <- format(as.Date(trips_v4$started_at), "%m")
+trips_v4$day <- format(as.Date(trips_v4$started_at), "%d")
+trips_v4$hour <- format(as.Date(trips_v4$started_at), "%H")
 
 ### #Create column for day of the week
 
-trips_all04$day_of_week <- format(trips_all04$started_at,"%A")
+trips_v4$day_of_week <- format(as.Date(trips_v4$started_at),"%A")
+
+
+### #Adding Trip Duration
+trips_v5 <- mutate(trips_v4, ride_length = difftime(ended_at, started_at, units = "mins"))
+str(trips_v5)
+
+### #Preview Data
+head(trips_v5)
+
+### #Filter the Data - remove trips <= 2 minutes
+
+trips_v6 <- trips_v5[!trips_v5$ride_length <= 2,]
+
+### #I checked again number of row and the results was 4 166 576
+
+str(trips_v6)
+
+![diff](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/5d7950f6-3835-4f78-99bd-4f64abbc402a)
+
 
 ### #Convert to factor w/levels, specify order of days
 
-trips_all04$day_of_week <- factor(trips_all04$day_of_week, levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
-
-### #Adding Trip Duration
-trips_all05 <- trips_all04
-trips_all05$trip_duration_seconds <- difftime(trips_all05$ended_at, trips_all05$started_at, units = "secs") 
-trips_all05$trip_duration_seconds <- as.numeric(as.character(trips_all05$trip_duration_seconds))
-
-### #Preview Data
-head(trips_all05)
-
-### #Filter the Data - remove trips < 120 minutes
-
-trips_duration <- trips_all05 %>%
-  filter(trip_duration_seconds > 120)
-
+trips_v7$day_of_week <- factor(trips_v6$day_of_week, levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
 
 ### #Create separate data frames for casual riders and members; may be useful for analysis.
-  data_member <- trips_duration %>% 
-    filter(member_casual == "member")
-  data_casual <- trips_duration %>% 
-    filter(member_casual == "casual")
+  
+  data_member <- trips_v7 %>% 
+  filter(member_casual == "member")
+data_casual <- trips_v7 %>% 
+  filter(member_casual == "casual")
+
+
+### #Summarize number of trips by membership
+  num_trips_by_membership <- table(trips_duration$member_casual) %>% 
+    as.data.frame()
