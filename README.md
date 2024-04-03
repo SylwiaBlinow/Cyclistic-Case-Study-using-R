@@ -131,6 +131,22 @@ str(trips_v6)
 ![diff](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/5d7950f6-3835-4f78-99bd-4f64abbc402a)
 
 
+### #Create a mapping between Polish and English day names
+
+polish_to_english <- c(
+  "poniedziałek" = "Monday",
+  "wtorek" = "Tuesday",
+  "środa" = "Wednesday",
+  "czwartek" = "Thursday",
+  "piątek" = "Friday",
+  "sobota" = "Saturday",
+  "niedziela" = "Sunday"
+)
+
+### #Replace Polish day names with English day names using the mapping
+trips_v6$day_of_week <- polish_to_english[trips_v6$day_of_week]
+
+
 ### #Convert to factor w/levels, specify order of days
 
 trips_v7$day_of_week <- factor(trips_v6$day_of_week, levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
@@ -144,5 +160,44 @@ data_casual <- trips_v7 %>%
 
 
 ### #Summarize number of trips by membership
-  num_trips_by_membership <- table(trips_duration$member_casual) %>% 
-    as.data.frame()
+ num_trips_by_membership <- table(trips_v7$member_casual) %>% 
+  as.data.frame()
+  
+### #Create pie chart to show number of trips by membership.
+
+ggplot(num_trips_by_membership, aes(x = "", y = Freq, fill = Var1)) +
+  geom_bar(stat = "identity", width = 1, color="white") +
+  coord_polar("y", start = 0, direction = -1) +
+  theme_void() +
+  theme(axis.line = element_blank(), axis.ticks = element_blank(), plot.title = element_text(hjust = 0.5)) +
+  ggtitle("Trips per Membership Type") +
+  theme(plot.title=element_text( hjust=0.5, vjust=0.5, face='bold')) +
+  labs(fill = "Membership Type", x = NULL, y = NULL) +
+  geom_text(aes(label = paste(round(Freq / sum(Freq) * 100, 1), "%")), position = position_stack(vjust = 0.5))
+
+![pie](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/d91f19fe-c375-4e1a-bf36-604d1f560e73)
+
+
+### #Create bar plot to show number of trips by membership       
+trips_v7 %>% 
+  group_by(member_casual) %>% 
+  summarise(ride_count=length(ride_id)) %>% 
+  ggplot()+geom_col(mapping = aes(x=member_casual,y=ride_count, fill=member_casual),show.legend = "false") + 
+  labs(title = "Total No of Rides")
+
+ ![chart](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/59cee0fe-96b5-4c1e-a3df-4ad39f81a7ee)
+
+
+
+### #Create bar plot to show the Days of the Week with No. of Rides taken by Riders
+
+trips_v7 %>% 
+  group_by(member_casual, day_of_week) %>% 
+  summarise(number_of_rides=n(), .groups = "drop") %>% 
+  ggplot(aes(x = day_of_week, y = number_of_rides, fill = member_casual)) +
+  labs(title = "Total Rides vs.Day of The Week") +
+  geom_col(width = 0.5, position = position_dodge(width = 0.5)) +
+  scale_y_continuous(labels = function(x) format(x,scientific = FALSE))
+
+![chart2](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/5c03395a-ab05-4961-9497-bd7a89775778)
+
