@@ -375,6 +375,12 @@ map_data <- trips_v8 %>%
   mutate(numtrips = n()) %>%
   distinct(start_station_name, .keep_all = TRUE)
 
+
+![stations](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/0972d207-c1f8-480a-ad3d-8fec439fdb56)
+
+
+
+
 map_bins <- seq(0, 50000, by = 5000)
 
 my_palette <- colorBin(palette ="viridis", domain = map_data$numtrips, na.color = "transparent", bins = map_bins, reverse = TRUE)
