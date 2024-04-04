@@ -356,7 +356,6 @@ trips_v8 %>%
   num_trips_by_station[order(num_trips_by_station$n, decreasing = TRUE),]
 
 
-### #create bubble map
 
 ### #create bubble map
 install.packages("leaflet")
