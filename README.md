@@ -347,3 +347,20 @@ trips_v8 %>%
   scale_y_continuous(labels = function(x) format(x, scientific = FALSE))
 
 ![types](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/5871236e-b08e-48a4-bea2-c88a70a60507)
+
+
+
+
+
+### Recommendations
+
+We can conclude that member users and casual users are quite different group of people:
+* casual users use bike for casual reasons such as sightseeing or leisure. They have peak season of summertime, peak usage on weekend and off-rush hour and spend more time on bike. 
+* member users use bike at commuting hours in commercial areas with heavy traffic. They use bike more often but for short time.
+
+To convert casual riders into annual members, the following marketing strategies can be implemented:
+* online advertising with app benefits for memebrs
+* social media marketing showing users and they trips 
+* customer referral marketing with discounts
+* offering loyalty programs especially during summertime and weekends
+* organizing sightseeing events for members
