@@ -204,7 +204,7 @@ trips_v8 %>%
 
 ![noweeks](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/442dac43-5aed-49bd-a3bf-ffa4a8e5c382)
 
-### #Create bar plot to show the Days of the Week with No. of Rides taken by Riders
+### #Create bar plot to show the Days of the Week with No. of rides taken by Riders
 
 trips_v8 %>% 
   filter(!is.na(member_casual)) %>% 
@@ -236,6 +236,37 @@ labels <- c("Night", "Morning", "Afternoon", "Evening")
 
 trips_v8$time_of_the_trip <-cut(x=hour(trips_v8$started_at), breaks = breaks, labels = labels, include.lowest = "true")
 
+
+### #Summarize average trip duration by time of day, for each membership type.
+
+trips_v8 %>% 
+  group_by(time_of_the_trip, member_casual) %>%
+  summarize(average_ride_length=mean(ride_length)) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  as.data.frame() %>% 
+  print(n = nrow(48))
+
+
+### #create dataframe for summarized data.
+average_ride_length <- trips_v8 %>%
+  group_by(time_of_the_trip, member_casual) %>%
+  summarize(average_ride_length = mean(ride_length), .groups = "drop") %>%
+  mutate_if(is.numeric, round, 2)
+
+print(average_ride_length)
+
+### #plot average trip duration by time of day, for each membership type.
+ggplot(data = average_ride_length, aes(x = time_of_the_trip, y = average_ride_length, color = member_casual, group = member_casual)) +
+  geom_line(size = 2) +
+  coord_cartesian(ylim = c(10, 25)) +  # Adjusting y-axis limits
+  labs(x = "Time of Day", y = "Mean Trip Duration (minutes)", color = "Membership Type") +
+  ggtitle("Mean Trip Duration by Time of Day") +
+  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5, face = 'bold')) +
+  guides(color = guide_legend(title = "Membership Type"))
+
+![time](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/85ac0b8e-fd36-4b63-a57c-3256d9616ded)
+
+
 ### #Comparing Ride Lengths between different Times of the Day
 
 trips_v8 %>% 
@@ -244,6 +275,32 @@ trips_v8 %>%
 
 ![clocl](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/08a96a79-4534-4819-bed5-b6e5855312d4)
 
+
+### #summarize number of trips per time of day, for each membership type.
+table(trips_v8$time_of_the_trip, trips_v8$member_casual)
+
+
+### #create data frame of trips per time of day, for each membership type.
+num_trips_by_time<- trips_v8 %>% 
+  group_by(time_of_the_trip, member_casual) %>%
+  summarize(n=n()) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  as.data.frame() %>% 
+  print(n = nrow(24))
+
+![time2](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/c6455272-efdf-4e96-8b46-6145d500a564)
+
+num_trips_by_time %>% 
+  ggplot() +
+  geom_line(aes(x=time_of_the_trip, y=n, color=member_casual, group=member_casual), size = 2) +
+  scale_y_continuous(name = "Number of Trips", labels = function(x) format(x, big.mark = ",", scientific = FALSE)) +
+  labs(x = "Time of Day", y = "Number of Trips", fill = "Membership Type") +
+  ggtitle("Number of Trips per Time of Day") +
+  theme(plot.title=element_text( hjust=0.5, vjust=0.5, face='bold')) +
+  guides(color=guide_legend("Membership Type"))
+
+
+ ![time3](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/71b18583-fef3-47fa-9d66-744fc76fbcda)
 
 ### #Average Trip Duration vs. Day of The Week
 trips_v8 %>% 
