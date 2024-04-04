@@ -227,3 +227,66 @@ summarise(average_ride_length=mean(ride_length),median_ride_length=median(ride_l
 
 
 ### #Adding another column for different periods in a day
+
+breaks<-hour((hm("00:00", "6:00", "12:00", "18:00", "23:59")))
+
+labels <- c("Night", "Morning", "Afternoon", "Evening")
+
+### #Defining Time of the Day
+
+trips_v8$time_of_the_trip <-cut(x=hour(trips_v8$started_at), breaks = breaks, labels = labels, include.lowest = "true")
+
+### #Comparing Ride Lengths between different Times of the Day
+
+trips_v8 %>% 
+  group_by(member_casual,time_of_the_trip) %>% 
+  summarise(number_of_rides=n(),average_trip_duration=mean(ride_length),.groups = "drop")
+
+![clocl](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/08a96a79-4534-4819-bed5-b6e5855312d4)
+
+
+### #Average Trip Duration vs. Day of The Week
+trips_v8 %>% 
+  group_by(member_casual,day_of_week) %>% 
+  summarise(average_ride_length=mean(ride_length), .groups = "drop") %>% 
+  ggplot(aes(x = day_of_week, y = average_ride_length, fill = member_casual)) +
+  geom_col(width = 0.5, position = position_dodge(width = 0.5)) +
+  labs(title = "Average Trip Duration vs. Day of The Week")
+
+![durationinweek](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/3af9a0f9-c4ee-46f2-841c-95c2c732ee87)
+
+
+### #Average ride length vs. month
+
+trips_v8 %>% 
+  group_by(member_casual, month) %>%
+  summarise(average_ride_length = mean(ride_length), .groups = "drop") %>%
+  ggplot(aes(x = month, y = average_ride_length, fill = member_casual)) +
+  geom_col(width = 0.5, position = position_dodge(width = 0.5)) +
+  labs(title = "Average ride length vs. month")
+
+
+![month](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/c127b142-be5a-45e8-b15f-d5bc3e0e9800)
+
+### #Comparing Casual and Member Rides by Distance
+
+trips_v8 %>% 
+  group_by(member_casual) %>%
+  summarise(average_ride_distance = mean(ride_length)) %>%
+  ggplot() + geom_col(mapping = aes(x = member_casual, y = average_ride_distance, fill = member_casual), show.legend = FALSE) +
+  labs(title = "Mean Distance")
+
+![meandis](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/cc38a4c6-aee2-48ab-9402-1416a0ea7470)
+
+
+### #Comparing different types of ride
+
+trips_v8 %>%
+  group_by(member_casual, rideable_type) %>%
+  summarise(number_of_rides = n(), .groups = "drop") %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = rideable_type, y = number_of_rides, fill = member_casual), show.legend = TRUE) +
+  labs(title = "Ride type and no. of rides") +
+  scale_y_continuous(labels = function(x) format(x, scientific = FALSE))
+
+![types](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/5871236e-b08e-48a4-bea2-c88a70a60507)
