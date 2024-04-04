@@ -349,7 +349,71 @@ trips_v8 %>%
 ![types](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/5871236e-b08e-48a4-bea2-c88a70a60507)
 
 
+### #list most popular station
+ num_trips_by_station <- trips_v8  %>% 
+  group_by(start_station_name) %>% 
+  summarize(n=n()) 
+  num_trips_by_station[order(num_trips_by_station$n, decreasing = TRUE),]
 
+
+### #create bubble map
+
+### #create bubble map
+install.packages("leaflet")
+
+library(leaflet)
+install.packages("htmlwidgets")
+library(htmlwidgets)
+install.packages("htmltools")
+library(htmltools)
+
+
+map_data <- trips_v8 %>%
+  select( start_station_name, 
+          start_lat, 
+          start_lng) %>%
+  group_by(start_station_name) %>%
+  mutate(numtrips = n()) %>%
+  distinct(start_station_name, .keep_all = TRUE)
+
+map_bins <- seq(0, 50000, by = 5000)
+
+my_palette <- colorBin(palette ="viridis", domain = map_data$numtrips, na.color = "transparent", bins = map_bins, reverse = TRUE)
+
+map_text <- paste("Station name: ", map_data$start_station_name, "<br/>","Number of trips: ", map_data$numtrips, sep = "") %>%
+  lapply(htmltools::HTML)
+
+
+trips_per_station_map <- leaflet(map_data) %>% 
+  addTiles() %>%  
+  
+
+setView(lng = -87.6298, lat = 41.8781, zoom = 10.5) %>% 
+  
+
+addProviderTiles("Esri.WorldGrayCanvas") %>%
+  
+addCircleMarkers(~ start_lng, ~ start_lat, 
+fillColor = ~ my_palette(numtrips),
+fillOpacity = 0.6, 
+color = "white", 
+radius = 6,
+stroke = FALSE,
+label = map_text,
+labelOptions = labelOptions(style = list("font-weight" = "normal", padding = "3px 8px"), 
+textsize = "13px", 
+direction = "auto")) %>%
+
+addLegend( 
+pal = my_palette, 
+values = ~ numtrips, 
+opacity = 0.8,
+title = "No. of trips", 
+position = "bottomright")
+
+trips_per_station_map
+
+![map](https://github.com/SylwiaBlinow/Cyclistic-Case-Study-using-R/assets/156024627/4fbefc61-5ae6-40c3-9825-9bc1bfe6485e)
 
 
 ### Recommendations
